@@ -4,32 +4,42 @@ from time import sleep
 from math import floor
 import random
 
-def main():
+def main(move_type):
     BACKGROUND_APP = 'C:\WINDOWS\system32\mspaint.exe'
     APP_OPEN_WAIT_TIME = 2
     pyautogui.PAUSE = 5
     pyautogui.FAILSAFE = True
     FAILSAFE_TOPLEFT_AREA_FACTOR = 0.1
+    CENTER_FACTOR = 0.333
+    WANDER_RANGE_FACTOR = 0.1
 
     # open up process
     app_process = subprocess.Popen([BACKGROUND_APP])
     sleep(APP_OPEN_WAIT_TIME)
     pyautogui.hotkey('win', 'up')
 
-    screenWidth, screenHeight = pyautogui.size()
-    pyautogui.FAILSAFE_POINTS.extend(get_failsafe_top_left_area_points(screenWidth, screenHeight, FAILSAFE_TOPLEFT_AREA_FACTOR))
-    print("Screen Width: %s, Screen Height: %s" % (screenWidth, screenHeight))
+    initial_screenWidth, initial_screenHeight = pyautogui.size()
+    pyautogui.FAILSAFE_POINTS = get_failsafe_top_left_area_points(initial_screenWidth, initial_screenHeight, FAILSAFE_TOPLEFT_AREA_FACTOR)
+    print("Screen Width: %s, Screen Height: %s" % (initial_screenWidth, initial_screenHeight))
     currentX, currentY = pyautogui.position()
     print("Current Position: (X: %s, Y: %s)" % pyautogui.position())
     try:
         while True:
-            INITIAL_POSITION = (screenWidth // 3, screenHeight // 3)
-            pyautogui.moveTo(INITIAL_POSITION[0], INITIAL_POSITION[1])
+            if pyautogui.size() != (initial_screenWidth, initial_screenHeight):
+                initial_screenWidth, initial_screenHeight = pyautogui.size()
+                print("Screen Size Changed, Current Width: %s, Current Height: %s" % (initial_screenWidth, initial_screenHeight))
+                pyautogui.FAILSAFE_POINTS = get_failsafe_top_left_area_points(initial_screenWidth, initial_screenHeight, FAILSAFE_TOPLEFT_AREA_FACTOR)
+            pyautogui.moveTo(floor(initial_screenWidth * CENTER_FACTOR), floor(initial_screenHeight * CENTER_FACTOR))
             print("Moved To: (X: %s, Y: %s)" % pyautogui.position())
-            next_x = random.randint(-screenWidth // 10, screenWidth // 10)
-            next_y = random.randint(-screenHeight // 10, screenHeight // 10)
-            pyautogui.drag(next_x, next_y, duration=(random.randint(1, 2000)/2000))
-            print("dragged")
+            next_x = random.randint(-floor(initial_screenWidth * WANDER_RANGE_FACTOR), floor(initial_screenWidth * WANDER_RANGE_FACTOR))
+            next_y = random.randint(-floor(initial_screenHeight * WANDER_RANGE_FACTOR), floor(initial_screenHeight * WANDER_RANGE_FACTOR))
+            if move_type == 'DRAG':
+                pyautogui.drag(next_x, next_y, duration=(random.randint(1, 2000) / 2000))
+            elif move_type == 'MOVE_REL':
+                pyautogui.moveRel(next_x, next_y, duration=(random.randint(1, 2000) / 2000))
+            else:
+                raise RuntimeError('The move type is not supported.')
+            print("Dragged To: (X: %s, Y: %s)" % (next_x, next_y))
 
     except pyautogui.FailSafeException:
         print("Fail Safe exit")
@@ -47,4 +57,6 @@ def get_failsafe_top_left_area_points(screenWidth, screenHeight, factor):
 
 
 if __name__ == '__main__':
-    main()
+    MOVE_TYPE = 'DRAG'
+    # can be change to 'MOVE_REL'
+    main(MOVE_TYPE)
