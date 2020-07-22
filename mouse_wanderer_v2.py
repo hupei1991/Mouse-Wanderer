@@ -59,10 +59,10 @@ def build_interface():
     indicator_frame.pack(anchor='n', expand=True)
     controller_frame = tk.Frame(main_frame)
     controller_frame.pack(anchor='s', expand=True)
-    timer_label = tk.Label(master=indicator_frame, text='Click Start to Begin', fg='gray9', font='Helvetica 25 normal')
+    timer_label = tk.Label(master=indicator_frame, text='Click Start to Begin', fg='gray9', font='Helvetica 18 normal')
     timer_label.pack(side='top')
     position_label = tk.Label(master=indicator_frame, text='x: %s, y: %s' % pyautogui.position(), fg='gray9',
-                              font='Helvetica 20 normal')
+                              font='Helvetica 15 normal')
     position_label.pack(side='bottom')
     start_button = tk.Button(master=controller_frame, text='Start', width=10)
     start_button.pack(side='left')
