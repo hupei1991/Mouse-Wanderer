@@ -1,1 +1,2 @@
+# need to install tkinter as prerequisite
 pyautogui
