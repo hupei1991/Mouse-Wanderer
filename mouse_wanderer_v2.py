@@ -31,7 +31,7 @@ def moving(root, start_button, stop_button, timer_label, position_label):
                                (random.randint(1, current_screen_height) / current_screen_height))
         pyautogui.moveTo(move_to_x, move_to_y)
         elapsed_time = (datetime.datetime.now() - START_TIME).total_seconds()
-        timer_label['text'] = 'Time Elapsed: %s seconds' % math.floor(elapsed_time)
+        timer_label['text'] = 'Elapsed: %s seconds' % math.floor(elapsed_time)
         position_label['text'] = 'x: %s, y: %s' % pyautogui.position()
         BUTTON_AFTER_ID = root.after(5000, lambda: moving(root, start_button, stop_button, timer_label, position_label))
 
@@ -59,10 +59,10 @@ def build_interface():
     indicator_frame.pack(anchor='n', expand=True)
     controller_frame = tk.Frame(main_frame)
     controller_frame.pack(anchor='s', expand=True)
-    timer_label = tk.Label(master=indicator_frame, text='Click Start to Begin', fg='gray9', font='Helvetica 18 normal')
+    timer_label = tk.Label(master=indicator_frame, text='Click Start to Begin', fg='gray9', font='Helvetica 16 normal')
     timer_label.pack(side='top')
     position_label = tk.Label(master=indicator_frame, text='x: %s, y: %s' % pyautogui.position(), fg='gray9',
-                              font='Helvetica 15 normal')
+                              font='Helvetica 14 normal')
     position_label.pack(side='bottom')
     start_button = tk.Button(master=controller_frame, text='Start', width=10)
     start_button.pack(side='left')
