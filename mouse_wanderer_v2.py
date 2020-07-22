@@ -51,7 +51,7 @@ def build_interface():
     root.title('Mouse Wanderer')
     root.minsize(width=350, height=200)
     root.maxsize(width=350, height=200)
-    imgicon = tk.PhotoImage(file=os.path.join(pathlib.Path(__file__).absolute(), 'icon.png'))
+    imgicon = tk.PhotoImage(file=os.path.join(pathlib.Path(__file__).parent.absolute(), 'icon.png'))
     root.tk.call('wm', 'iconphoto', root._w, imgicon)
     main_frame = tk.Frame(root)
     main_frame.pack(anchor='center', padx=20, pady=10, expand=True)
