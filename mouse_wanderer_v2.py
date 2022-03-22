@@ -1,3 +1,4 @@
+import ctypes
 import tkinter as tk
 import pyautogui
 import random
@@ -5,17 +6,24 @@ import math
 import os
 import datetime
 import pathlib
+import platform
 
 RUNNING = False
 BUTTON_AFTER_ID = None
 pyautogui.FAILSAFE = False
 START_TIME = datetime.datetime.now()
+IS_WINDOWS = ("WINDOWS" in platform.uname()[0].upper())
+ES_CONTINUOUS = 0x80000000
+ES_SYSTEM_REQUIRED = 0x00000001
 
 
 def start_moving(root, start_button, stop_button, timer_label, position_label):
     global RUNNING, START_TIME
     RUNNING = True
     START_TIME = datetime.datetime.now()
+    if IS_WINDOWS:
+        # Prevent from sleep
+        ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED)
     moving(root, start_button, stop_button, timer_label, position_label)
 
 
@@ -33,13 +41,16 @@ def moving(root, start_button, stop_button, timer_label, position_label):
         elapsed_time = (datetime.datetime.now() - START_TIME).total_seconds()
         timer_label['text'] = 'Elapsed: %s seconds' % math.floor(elapsed_time)
         position_label['text'] = 'x: %s, y: %s' % pyautogui.position()
-        BUTTON_AFTER_ID = root.after(5000, lambda: moving(root, start_button, stop_button, timer_label, position_label))
+        BUTTON_AFTER_ID = root.after(120000, lambda: moving(root, start_button, stop_button, timer_label, position_label))
 
 
 def stop_moving(root, start_button, stop_button, timer_label, position_label):
     global RUNNING, BUTTON_AFTER_ID
     RUNNING = False
     BUTTON_AFTER_ID = None
+    if IS_WINDOWS:
+        # Resume from capability for sleep
+        ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
     start_button['state'] = 'normal'
     stop_button['state'] = 'disable'
     timer_label['text'] = 'Click Start to Begin'
